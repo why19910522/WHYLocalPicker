@@ -1,0 +1,6 @@
+framework module Pods_WHYLocalPicker {
+  umbrella header "Pods-WHYLocalPicker-umbrella.h"
+
+  export *
+  module * { export * }
+}

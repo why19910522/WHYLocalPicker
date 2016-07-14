@@ -2,13 +2,20 @@
 //  ViewController.swift
 //  WHYLocalPicker
 //
-//  Created by 王洪运 on 16/7/13.
+//  Created by 王洪运 on 16/7/14.
 //  Copyright © 2016年 王洪运. All rights reserved.
 //
 
 import UIKit
 
 class ViewController: UIViewController {
+
+    lazy var localController: LocalController = {
+
+        let local = LocalController()
+
+        return local
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
