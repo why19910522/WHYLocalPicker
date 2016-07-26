@@ -10,10 +10,13 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var lb: UILabel!
+
     lazy var localController: LocalController = {
 
         let local = LocalController()
-
+        local.localTitleColor = UIColor.blueColor()
+        local.customListCellClass = CustomLIstCell.classForCoder()
         return local
     }()
 
@@ -27,6 +30,12 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    @IBAction func clickBtn() {
+
+        view.addSubview(localController.view)
+//        presentViewController(localController, animated: true, completion: nil)
+
+    }
 
 }
 

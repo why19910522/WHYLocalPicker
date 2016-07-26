@@ -19,6 +19,8 @@
 		90CD718A1D37936D00261B72 /* LocalCustomAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CD71861D37936D00261B72 /* LocalCustomAnimator.swift */; };
 		90CD718B1D37936D00261B72 /* LocalListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CD71871D37936D00261B72 /* LocalListController.swift */; };
 		90CD718C1D37936D00261B72 /* LocalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CD71881D37936D00261B72 /* LocalPresentationController.swift */; };
+		90E570C51D3E1A9600E5DB25 /* LocalIndicatorButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90E570C41D3E1A9600E5DB25 /* LocalIndicatorButton.swift */; };
+		90F9384B1D45B237000579FE /* CustomLIstCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9384A1D45B237000579FE /* CustomLIstCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +53,9 @@
 		90CD71861D37936D00261B72 /* LocalCustomAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalCustomAnimator.swift; sourceTree = "<group>"; };
 		90CD71871D37936D00261B72 /* LocalListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalListController.swift; sourceTree = "<group>"; };
 		90CD71881D37936D00261B72 /* LocalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalPresentationController.swift; sourceTree = "<group>"; };
+		90CD718D1D3796CD00261B72 /* WHYLocalPicker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WHYLocalPicker-Bridging-Header.h"; sourceTree = "<group>"; };
+		90E570C41D3E1A9600E5DB25 /* LocalIndicatorButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalIndicatorButton.swift; sourceTree = "<group>"; };
+		90F9384A1D45B237000579FE /* CustomLIstCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomLIstCell.swift; sourceTree = "<group>"; };
 		F96A784692F82E4D0B5CD164 /* Pods_WHYLocalPicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WHYLocalPicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -100,10 +105,12 @@
 				90CD71841D37936D00261B72 /* LocalPIcker */,
 				90CD71641D37931F00261B72 /* AppDelegate.swift */,
 				90CD71661D37931F00261B72 /* ViewController.swift */,
+				90F9384A1D45B237000579FE /* CustomLIstCell.swift */,
 				90CD71681D37931F00261B72 /* Main.storyboard */,
 				90CD716B1D37931F00261B72 /* Assets.xcassets */,
 				90CD716D1D37931F00261B72 /* LaunchScreen.storyboard */,
 				90CD71701D37931F00261B72 /* Info.plist */,
+				90CD718D1D3796CD00261B72 /* WHYLocalPicker-Bridging-Header.h */,
 			);
 			path = WHYLocalPicker;
 			sourceTree = "<group>";
@@ -121,8 +128,9 @@
 			isa = PBXGroup;
 			children = (
 				90CD71851D37936D00261B72 /* LocalController.swift */,
-				90CD71861D37936D00261B72 /* LocalCustomAnimator.swift */,
 				90CD71871D37936D00261B72 /* LocalListController.swift */,
+				90E570C41D3E1A9600E5DB25 /* LocalIndicatorButton.swift */,
+				90CD71861D37936D00261B72 /* LocalCustomAnimator.swift */,
 				90CD71881D37936D00261B72 /* LocalPresentationController.swift */,
 			);
 			path = LocalPIcker;
@@ -334,9 +342,11 @@
 			files = (
 				90CD71671D37931F00261B72 /* ViewController.swift in Sources */,
 				90CD718A1D37936D00261B72 /* LocalCustomAnimator.swift in Sources */,
+				90E570C51D3E1A9600E5DB25 /* LocalIndicatorButton.swift in Sources */,
 				90CD71651D37931F00261B72 /* AppDelegate.swift in Sources */,
 				90CD718B1D37936D00261B72 /* LocalListController.swift in Sources */,
 				90CD71891D37936D00261B72 /* LocalController.swift in Sources */,
+				90F9384B1D45B237000579FE /* CustomLIstCell.swift in Sources */,
 				90CD718C1D37936D00261B72 /* LocalPresentationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,11 +477,14 @@
 			baseConfigurationReference = 7D99E21A35B1FCC21189A3C9 /* Pods-WHYLocalPicker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = WHYLocalPicker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = why.WHYLocalPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WHYLocalPicker/WHYLocalPicker-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -480,11 +493,13 @@
 			baseConfigurationReference = 48899CB75537A6C65D1CEE25 /* Pods-WHYLocalPicker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = WHYLocalPicker/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = why.WHYLocalPicker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WHYLocalPicker/WHYLocalPicker-Bridging-Header.h";
 			};
 			name = Release;
 		};

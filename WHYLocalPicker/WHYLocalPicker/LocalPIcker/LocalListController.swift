@@ -8,16 +8,19 @@
 
 import UIKit
 
+let cellId = "LocalListCell"
+
 class LocalListController: UITableViewController {
+
+    var cellClass : AnyClass?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        if let cellClass = self.cellClass {
+            tableView.registerClass(cellClass, forCellReuseIdentifier: cellId)
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,15 +30,35 @@ class LocalListController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1;
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 20;
+    }
+
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+
+        var cell = tableView.dequeueReusableCellWithIdentifier(cellId)
+
+        if cellClass != nil {
+            return cell!
+        }
+
+        if cell == nil {
+            cell = UITableViewCell(style: .Default, reuseIdentifier: cellId)
+        }
+        cell?.textLabel?.text = "测试" + "\(arc4random_uniform(32))"
+        return cell!
     }
 
 
+}
+
+
+extension UIColor {
+    public class func randomColor() -> UIColor {
+        return UIColor(red: CGFloat(arc4random_uniform(256)) / 255.0, green: CGFloat(arc4random_uniform(256)) / 255.0, blue: CGFloat(arc4random_uniform(256)) / 255.0, alpha: 1.0)
+    }
 }

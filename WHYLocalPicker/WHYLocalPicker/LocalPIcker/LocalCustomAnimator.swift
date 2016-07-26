@@ -17,7 +17,7 @@ class LocalCustomAnimator: NSObject {
 extension LocalCustomAnimator : UIViewControllerTransitioningDelegate {
 
     func presentationController(forPresentedViewController presented: UIViewController, presenting: UIViewController?, sourceViewController source: UIViewController) -> UIPresentationController? {
-        return LocalPresentationController(presentedViewController: presented, presenting: presenting)
+        return LocalPresentationController(presentedViewController: presented, presentingViewController: presenting!)
     }
 
     func animationController(forPresentedController presented: UIViewController, presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -25,7 +25,7 @@ extension LocalCustomAnimator : UIViewControllerTransitioningDelegate {
         return self
     }
 
-    func animationController(forDismissedController dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         isPresented = false
         return self
     }
@@ -34,12 +34,12 @@ extension LocalCustomAnimator : UIViewControllerTransitioningDelegate {
 
 extension LocalCustomAnimator : UIViewControllerAnimatedTransitioning {
 
-    func transitionDuration(_ transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+    func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
         return 1.0
     }
 
     /// 转场动画实现方法
-    func animateTransition(_ transitionContext: UIViewControllerContextTransitioning) {
+    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
 
     }
 
