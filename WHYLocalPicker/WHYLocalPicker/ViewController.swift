@@ -16,13 +16,17 @@ class ViewController: UIViewController {
 
         let local = LocalController()
         local.localTitleColor = UIColor.blueColor()
-        local.customListCellClass = CustomLIstCell.classForCoder()
+        local.localDelegate = self
+//        local.customListCellClass = CustomLIstCell.classForCoder()
         return local
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+
+        
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,5 +41,11 @@ class ViewController: UIViewController {
 
     }
 
+}
+
+extension ViewController : LocalControllerDelegate {
+    func localControllerDidiFinishedPick(localController: LocalController, localStr: String) {
+        lb.text = localStr
+    }
 }
 

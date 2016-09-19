@@ -11,6 +11,10 @@ import SnapKit
 
 private let mainScreenWidth = UIScreen.mainScreen().bounds.size.width
 
+protocol LocalControllerDelegate {
+    func localControllerDidiFinishedPick(localController : LocalController, localStr : String)
+}
+
 class LocalController: UIViewController {
 
 // MARK: - public var
@@ -41,6 +45,7 @@ class LocalController: UIViewController {
     /// set customListCell ,if you want to customize the list cell ,please user this var
     var customListCellClass : AnyClass?
 
+    var localDelegate : LocalControllerDelegate?
 
 
 
@@ -72,6 +77,7 @@ class LocalController: UIViewController {
         for i in 0..<self.indicatorButtons.count {
             let controller = LocalListController()
             controller.cellClass = self.customListCellClass
+            controller.deleget = self
             controllers.append(controller)
         }
 
@@ -85,12 +91,14 @@ class LocalController: UIViewController {
         scroll.backgroundColor = UIColor.cyanColor()
         scroll.pagingEnabled = true
         scroll.delegate = self
+//        scroll.contentSize = CGSizeMake(mainScreenWidth, 0)
         return scroll
     }()
 
     private lazy var indicatorButtons : [LocalIndicatorButton] = {
 
         if let btns = self.customIndicatorButtons {
+
             return btns
         }
 
@@ -149,6 +157,8 @@ class LocalController: UIViewController {
     }()
 
 // MARK: - private var
+    private var localStr = ""
+
     private var selectedIndicatorBtn : UIButton?
 
     private var indicatorIndex : Int {
@@ -164,36 +174,16 @@ class LocalController: UIViewController {
 extension LocalController {
 
     @objc private func clickIndicatorButton(btn : UIButton) {
-        if customIndicatorButtons != nil {
-            return
+
+        for i in 0..<indicatorButtons.count {
+            if btn == indicatorButtons[i] {
+                scrollToIndex(i)
+            }
         }
-
-        var index : CGFloat = 0.0
-
-        switch btn {
-            case indicatorButtons[0]:
-                index = 0.0
-                break
-            case indicatorButtons[1]:
-                index = 1.0
-                break
-            case indicatorButtons[2]:
-                index = 2.0
-                break
-            case indicatorButtons[3]:
-                index = 3.0
-                break
-            default:
-                break
-        }
-
-        horizontalScrollView.setContentOffset(CGPointMake(index * mainScreenWidth, 0), animated: true)
 
         selectedIndicatorBtn?.selected = false
         selectedIndicatorBtn = btn
         selectedIndicatorBtn?.selected = true
-
-        updateIndicatorSepFrame()
 
     }
 
@@ -201,39 +191,79 @@ extension LocalController {
         if (view.superview != nil) {
             view.removeFromSuperview()
         }
+        localStr = ""
+//        setDefaultFromIndex(-1)
     }
 
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    @objc internal override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         clickCloseBtn()
+    }
+
+}
+
+// MARK: - LocalListDelegate
+extension LocalController : LocalListDelegate {
+
+    func localListController(controller: LocalListController, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+
+        let cell = controller.tableView.cellForRowAtIndexPath(indexPath)!
+        cell.textLabel?.textColor = UIColor.redColor()
+
+        guard let text = cell.textLabel?.text else {
+            return
+        }
+
+        for i in 0..<listControllers.count {
+
+            if controller == listControllers[i] {
+
+                setDefaultFromIndex(i)
+
+                let btn = indicatorButtons[i]
+                btn.setTitle(text, forState: .Normal)
+
+                if (localStr.rangeOfString(text) == nil) {
+                    localStr += text
+                    print(localStr)
+                }
+
+                let nextIndex = i + 1
+
+                if nextIndex == indicatorButtons.count {
+
+                    let indicatorX = indicatorButtons[i].frame.origin.x
+                    let indicatorW = (text as NSString).sizeWithAttributes([NSFontAttributeName : btn.titleLabel!.font]).width
+                    updateIndicatorSepFrameWith(indicatorX: indicatorX, indicatorW: indicatorW)
+
+                    if let delegate = localDelegate {
+                        delegate.localControllerDidiFinishedPick(self, localStr: localStr)
+                        clickCloseBtn()
+                    }
+
+                    return
+                }
+
+                indicatorButtons[nextIndex].hidden = false
+                listControllers[nextIndex].tableView.hidden = false
+
+                horizontalScrollView.contentSize = CGSizeMake(CGFloat(nextIndex+1) * mainScreenWidth, 0)
+                scrollToIndex(nextIndex)
+
+            }
+        }
+
+
+    }
+
+    func localListController(controller: LocalListController, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        let cell = controller.tableView.cellForRowAtIndexPath(indexPath)
+        cell?.textLabel?.textColor = UIColor.blackColor()
     }
 
 }
 
 // MARK: - setup
 extension LocalController {
-
-    private func updateIndicatorSepFrameWithIndex(index : Int) {
-        selectedIndicatorBtn = indicatorButtons[index]
-        updateIndicatorSepFrame()
-    }
-
-    private func updateIndicatorSepFrame() {
-
-        guard let btn = selectedIndicatorBtn else {
-            return
-        }
-
-        let indicatorW = btn.frame.size.width
-        let indicatorX = btn.frame.origin.x
-        let indicatorY = CGRectGetMaxY(btn.frame)
-        let indicatorH : CGFloat = 1.0
-
-        UIView.animateWithDuration(0.3) {
-            self.indicatorSep.frame = CGRectMake(indicatorX, indicatorY, indicatorW, indicatorH)
-        }
-
-        //        print("\(indicatorW)")
-    }
 
     private func setupUI() {
 
@@ -288,6 +318,12 @@ extension LocalController {
                 make.bottom.equalTo(weakSelf.sep.snp_top);
                 make.height.equalTo(btnH)
             })
+
+            if i != 0 {
+                btn.hidden = true
+            }else {
+                selectedIndicatorBtn = btn
+            }
         }
 
         whiteBgView.addSubview(horizontalScrollView)
@@ -296,7 +332,7 @@ extension LocalController {
             make.top.equalTo(weakSelf.sep.snp_bottom)
         }
 
-        let tableViewW : CGFloat = UIApplication.sharedApplication().keyWindow!.bounds.size.width
+        let tableViewW : CGFloat = mainScreenWidth
         for i in 0..<listControllers.count {
             let listController = listControllers[i]
             horizontalScrollView.addSubview(listController.tableView)
@@ -306,14 +342,15 @@ extension LocalController {
                 }else {
                     make.left.equalTo(weakSelf.listControllers[i-1].tableView.snp_right)
                 }
-                if i == listControllers.count-1 {
-                    make.right.equalTo(weakSelf.horizontalScrollView)
-                }
-                make.top.bottom.equalTo(weakSelf.horizontalScrollView)
+
+                make.top.equalTo(weakSelf.horizontalScrollView)
                 make.width.equalTo(tableViewW)
                 make.height.equalTo(weakSelf.horizontalScrollView)
             })
 
+            if i != 0 {
+                listController.tableView.hidden = true
+            }
         }
 
         whiteBgView.addSubview(indicatorSep)
@@ -338,3 +375,48 @@ extension LocalController : UIScrollViewDelegate {
     }
 
 }
+
+// MARK: - private func
+private
+extension LocalController {
+
+    func setDefaultFromIndex(index : Int) {
+        for i in index+1..<indicatorButtons.count {
+            indicatorButtons[i].hidden = true
+            indicatorButtons[i].setTitle("请选择", forState: .Normal)
+            listControllers[i].tableView.hidden = true
+            listControllers[i].deselectedCell()
+        }
+        horizontalScrollView.contentSize = CGSizeMake(mainScreenWidth * CGFloat(index+1), 0)
+    }
+
+    func scrollToIndex(index : Int) {
+        horizontalScrollView.setContentOffset(CGPointMake(CGFloat(index) * mainScreenWidth, 0), animated: true)
+        updateIndicatorSepFrameWithIndex(index)
+    }
+
+    func updateIndicatorSepFrameWithIndex(index : Int) {
+        selectedIndicatorBtn = indicatorButtons[index]
+        selectedIndicatorBtn?.layoutIfNeeded()
+        let indicatorX = selectedIndicatorBtn!.frame.origin.x
+        let indicatorW = selectedIndicatorBtn!.frame.size.width
+        updateIndicatorSepFrameWith(indicatorX: indicatorX, indicatorW: indicatorW)
+    }
+
+    func updateIndicatorSepFrameWith(indicatorX x : CGFloat, indicatorW w : CGFloat) {
+
+//        let indicatorW = (btn.currentTitle as! NSString).sizeWithAttributes([NSFontAttributeName : btn.titleLabel!.font]).width
+//        let indicatorX = btn.frame.origin.x
+        let y = indicatorSep.frame.origin.y
+        let h : CGFloat = 1.0
+
+        UIView.animateWithDuration(0.3) {
+            self.indicatorSep.frame = CGRectMake(x, y, w, h)
+        }
+        
+    }
+
+}
+
+
+

@@ -8,19 +8,37 @@
 
 import UIKit
 
-let cellId = "LocalListCell"
+private let cellId = "LocalListCell"
+
+protocol LocalListDelegate {
+
+    func localListController(controller : LocalListController, didSelectRowAtIndexPath indexPath: NSIndexPath)
+
+    func localListController(controller : LocalListController, didDeselectRowAtIndexPath indexPath: NSIndexPath)
+
+}
 
 class LocalListController: UITableViewController {
 
     var cellClass : AnyClass?
 
+    var deleget : LocalListDelegate?
+
+    var dataModel : AnyObject?
+
+
+    private var selectedIndexPath : NSIndexPath?
+
+    func deselectedCell() {
+        if let lastIndexPath = selectedIndexPath {
+            self.tableView(tableView, didDeselectRowAtIndexPath : lastIndexPath)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let cellClass = self.cellClass {
-            tableView.registerClass(cellClass, forCellReuseIdentifier: cellId)
-        }
+        setup()
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,8 +46,11 @@ class LocalListController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    // MARK: - Table view data source
 
+}
+
+extension LocalListController {
+    // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1;
     }
@@ -49,11 +70,43 @@ class LocalListController: UITableViewController {
         if cell == nil {
             cell = UITableViewCell(style: .Default, reuseIdentifier: cellId)
         }
-        cell?.textLabel?.text = "测试" + "\(arc4random_uniform(32))"
+        cell?.textLabel?.text = "测试" + "\(arc4random_uniform(1000))"
+        cell?.selectionStyle = .None
         return cell!
     }
+}
 
+extension LocalListController {
+    // MARK: - Table view delegate
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 
+        if let lastIndexPath = selectedIndexPath {
+            self.tableView(tableView, didDeselectRowAtIndexPath : lastIndexPath)
+        }
+
+        if let localListDeleget = deleget {
+            localListDeleget.localListController(self, didSelectRowAtIndexPath: indexPath)
+            selectedIndexPath = indexPath
+        }
+    }
+
+    override func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        if let localListDeleget = deleget {
+            localListDeleget.localListController(self, didDeselectRowAtIndexPath: indexPath)
+        }
+    }
+}
+
+extension LocalListController {
+    private func setup() {
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
+//        tableView.allowsSelection = false
+
+        if let cellClass = self.cellClass {
+            tableView.registerClass(cellClass, forCellReuseIdentifier: cellId)
+        }
+    }
 }
 
 
